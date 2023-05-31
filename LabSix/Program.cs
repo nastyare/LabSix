@@ -3,29 +3,28 @@
 namespace LabSix
 {
     public static class MatrixExtensions
-    {
-        //Транспортация 
-        public static CreationOfMatrix MatrixTransposition(this CreationOfMatrix A)
+    { 
+        public static CreationOfMatrix MatrixTransposition(this CreationOfMatrix FirstMatrix)
         {
-            for (int IndexColumn = 0; IndexColumn < A.Dimension; IndexColumn++)
+            for (int IndexColumn = 0; IndexColumn < FirstMatrix.Dimension; IndexColumn++)
             {
-                for (int IndexRow = 0; IndexRow < A.Dimension; IndexRow++)
+                for (int IndexRow = 0; IndexRow < FirstMatrix.Dimension; IndexRow++)
                 {
-                    A.Matrix[IndexColumn, IndexRow] = A.Matrix[IndexRow, IndexColumn];
+                    FirstMatrix.Matrix[IndexColumn, IndexRow] = FirstMatrix.Matrix[IndexRow, IndexColumn];
                 }
             }
-            return A;
+            return FirstMatrix;
         }
-        public static double MatrixTrace(this CreationOfMatrix matrix)
+        public static double MatrixTrace(this CreationOfMatrix Matrix)
         {
             double Result = 0;
-            for (int IndexColumn = 0; IndexColumn < matrix.Dimension; ++IndexColumn)
+            for (int IndexColumn = 0; IndexColumn < Matrix.Dimension; ++IndexColumn)
             {
-                for (int IndexRow = 0; IndexRow < matrix.Dimension; ++IndexRow)
+                for (int IndexRow = 0; IndexRow < Matrix.Dimension; ++IndexRow)
                 {
                     if (IndexColumn == IndexRow)
                     {
-                        Result += matrix.Matrix[IndexColumn, IndexRow];
+                        Result += Matrix.Matrix[IndexColumn, IndexRow];
                     }
                 }
             }
@@ -407,13 +406,13 @@ namespace LabSix
 
             void ConvertToDiagonal(CreationOfMatrix FirstMatrix)
             {
-                Action<CreationOfMatrix> convertDelegate = delegate (CreationOfMatrix matrix) {
-                    for (int Column = 0; Column < matrix.Dimension; Column++)
+                Action<CreationOfMatrix> convertDelegate = delegate (CreationOfMatrix Matrix) {
+                    for (int Column = 0; Column < Matrix.Dimension; Column++)
                     {
-                        for (int Row = 0; Row < matrix.Dimension; Row++)
+                        for (int Row = 0; Row < Matrix.Dimension; Row++)
                         {
                             if (Column != Row)
-                                matrix.Matrix[Column, Row] = 0;
+                                Matrix.Matrix[Column, Row] = 0;
                         }
                     }
                 };
@@ -422,19 +421,18 @@ namespace LabSix
                 Console.WriteLine($"Матрица приведена к диагональному виду.\n {FirstMatrix}");
             }
 
-            bool exit = false;
+            bool Cancel = false;
 
-            while (!exit)
+            while (!Cancel)
             {
                 Console.WriteLine("Меню:");
-                Console.WriteLine("\n1. Генерация Матриц\n2. Вычисление 2х матриц\n3. Найти Определитель матрицы А\n4. Обратная матрица А\n" +
-                                  "5. Транспортирование матрицы А\n6. Сумма элементов диагонали Матрицы А\n7.Диагональный вид матрицы А\n" +
-                                  "8. Вывести матрицу\n9.Выход");
+                Console.WriteLine("\n1. Создание Матриц\n2. Калькулятор\n3. Определитель первой матрицы\n4. Обратная матрица\n" +
+                                  "5. Транспортирование матрицы\n6. Сумма элементов диагонали\n7.Диагональный вид матрицы\n8.Выход");
                 Console.WriteLine("\nВыберите действие:");
-                string choice = Console.ReadLine();
+                string Сhoice = Console.ReadLine();
                 Console.WriteLine();
 
-                switch (choice)
+                switch (Сhoice)
                 {
                     case "1":
                         FillMatrix(FirstMatrix, SecondMatrix);
@@ -443,13 +441,13 @@ namespace LabSix
                         CalculationsMenu(FirstMatrix, SecondMatrix);
                         break;
                     case "3":
-                        Console.WriteLine($"Determinant of MatrixA: {FirstMatrix.Determinant()}");
+                        Console.WriteLine($"Детерминант: {FirstMatrix.Determinant()}");
                         break;
                     case "4":
                         try
                         {
                             var InverseA = FirstMatrix.Inversion();
-                            Console.WriteLine($"Обратная матрица А:\n{InverseA}");
+                            Console.WriteLine($"Обратная матрица:\n{InverseA}");
                         }
                         catch (NotInvertible ex)
                         {
@@ -467,11 +465,9 @@ namespace LabSix
                         break;
                     case "7":
                         ConvertToDiagonal(FirstMatrix);
+                        Console.WriteLine($"{FirstMatrix}");
                         break;
                     case "8":
-                        Console.WriteLine($"Первая матрица: \n{FirstMatrix}");
-                        break;
-                    case "0":
                         exit = true;
                         break;
                     default:
@@ -483,42 +479,42 @@ namespace LabSix
             void CalculationsMenu(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix)
             {
                 Console.WriteLine("Выберите действие\n1. Сложение\n2. Вычитание\n3. Умножение\n4. Проверить на равность\n" +
-                                  "5. Сравнение >\n6. Сравнение <\n7. Сравнение >=\n8. Сравнение <=");
-                string choice = Console.ReadLine();
-                switch (choice)
+                                  "5. Больше\n6. Меньше\n7. Больше или равно\n8. Меньше или равно");
+                string Choice = Console.ReadLine();
+                switch (Choice)
                 {
                     case "1":
-                        Console.WriteLine($"MatrixA + MatrixB \n{FirstMatrix + SecondMatrix}");
+                        Console.WriteLine($"A + B \n{FirstMatrix + SecondMatrix}");
                         break;
                     case "2":
-                        Console.WriteLine($"MatrixA - MatrixB \n{FirstMatrix - SecondMatrix}");
+                        Console.WriteLine($"A - B \n{FirstMatrix - SecondMatrix}");
                         break;
                     case "3":
-                        Console.WriteLine($"MatrixA * MatrixB \n{FirstMatrix * SecondMatrix}");
+                        Console.WriteLine($"A * B \n{FirstMatrix * SecondMatrix}");
                         break;
                     case "4":
-                        Console.WriteLine($"MatrixA == MatrixB: {FirstMatrix == SecondMatrix}");
+                        Console.WriteLine($"A == B: {FirstMatrix == SecondMatrix}");
                         break;
                     case "5":
-                        Console.WriteLine($"MatrixA > MatrixB: {FirstMatrix > SecondMatrix}");
+                        Console.WriteLine($"A > B: {FirstMatrix > SecondMatrix}");
                         break;
                     case "6":
-                        Console.WriteLine($"MatrixA < MatrixB: {FirstMatrix < SecondMatrix}");
+                        Console.WriteLine($"A < B: {FirstMatrix < SecondMatrix}");
                         break;
                     case "7":
-                        Console.WriteLine($"MatrixA >= MatrixB: {FirstMatrix >= SecondMatrix}");
+                        Console.WriteLine($"A >= B: {FirstMatrix >= SecondMatrix}");
                         break;
                     case "8":
-                        Console.WriteLine($"MatrixA <= MatrixB: {FirstMatrix <= SecondMatrix}");
+                        Console.WriteLine($"A <= B: {FirstMatrix <= SecondMatrix}");
                         break;
                     default:
-                        Console.WriteLine("Нету такого выбора!");
+                        Console.WriteLine("Некорректный запрос.");
                         break;
                 }
             }
             void FillMatrix(CreationOfMatrix FirstMatrix, CreationOfMatrix Secondmatrix)
             {
-                Console.WriteLine("Заполненые матрицы:");
+                Console.WriteLine("Матрицы:");
                 Console.WriteLine(FirstMatrix.ToString());
                 Console.WriteLine(SecondMatrix.ToString());
             }
