@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace LabSix
 {
@@ -6,9 +6,9 @@ namespace LabSix
     { 
         public static CreationOfMatrix MatrixTransposition(this CreationOfMatrix FirstMatrix)
         {
-            for (int IndexColumn = 0; IndexColumn < FirstMatrix.Dimension; IndexColumn++)
+            for (int IndexColumn = 0; IndexColumn < FirstMatrix.Dimension; ++IndexColumn)
             {
-                for (int IndexRow = 0; IndexRow < FirstMatrix.Dimension; IndexRow++)
+                for (int IndexRow = 0; IndexRow < FirstMatrix.Dimension; ++IndexRow)
                 {
                     FirstMatrix.Matrix[IndexColumn, IndexRow] = FirstMatrix.Matrix[IndexRow, IndexColumn];
                 }
@@ -403,121 +403,222 @@ namespace LabSix
                     SecondMatrix[RowIndex, ColumnIndex] = Random.Next(100);
                 }
             }
+            
+            Console.WriteLine("Меню:");
+            Console.WriteLine("\n1. Генерация Матриц\n2. Вычисление 2х матриц\n3. Найти Определитель матрицы А\n4. Обратная матрица А\n" +
+                              "5. Транспортирование матрицы А\n6. Сумма элементов диагонали Матрицы А\n7.Диагональный вид матрицы А\n" +
+                              "8. Вывести матрицу\n9.Выход");
+            Console.WriteLine("\nВыберите действие:");
+            int Choice = int.Parse(Console.ReadLine());
 
-            void ConvertToDiagonal(CreationOfMatrix FirstMatrix)
-            {
-                Action<CreationOfMatrix> convertDelegate = delegate (CreationOfMatrix Matrix) {
-                    for (int Column = 0; Column < Matrix.Dimension; Column++)
-                    {
-                        for (int Row = 0; Row < Matrix.Dimension; Row++)
-                        {
-                            if (Column != Row)
-                                Matrix.Matrix[Column, Row] = 0;
-                        }
-                    }
-                };
+            Start Hand = new Start();
 
-                FirstMatrix.ConvertToDiagonal(convertDelegate);
-                Console.WriteLine($"Матрица приведена к диагональному виду.\n {FirstMatrix}");
-            }
+            Hand.HandleRequest(FirstMatrix, SecondMatrix, Choice); // запуск цепочки обязанностей
 
-            bool Cancel = false;
+            Console.ReadKey();
 
-            while (!Cancel)
-            {
-                Console.WriteLine("Меню:");
-                Console.WriteLine("\n1. Создание Матриц\n2. Калькулятор\n3. Определитель первой матрицы\n4. Обратная матрица\n" +
-                                  "5. Транспортирование матрицы\n6. Сумма элементов диагонали\n7.Диагональный вид матрицы\n8.Выход");
-                Console.WriteLine("\nВыберите действие:");
-                string Сhoice = Console.ReadLine();
-                Console.WriteLine();
-
-                switch (Сhoice)
-                {
-                    case "1":
-                        FillMatrix(FirstMatrix, SecondMatrix);
-                        break;
-                    case "2":
-                        CalculationsMenu(FirstMatrix, SecondMatrix);
-                        break;
-                    case "3":
-                        Console.WriteLine($"Детерминант: {FirstMatrix.Determinant()}");
-                        break;
-                    case "4":
-                        try
-                        {
-                            var InverseA = FirstMatrix.Inversion();
-                            Console.WriteLine($"Обратная матрица:\n{InverseA}");
-                        }
-                        catch (NotInvertible ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
-                        break;
-                    case "5":
-                        var transposedMatrix = FirstMatrix.MatrixTransposition();
-                        Console.WriteLine("Транспонированная матрица:");
-                        Console.WriteLine(transposedMatrix);
-                        break;
-                    case "6":
-                        double trace = FirstMatrix.MatrixTrace();
-                        Console.WriteLine($"След матрицы: {trace}\n");
-                        break;
-                    case "7":
-                        ConvertToDiagonal(FirstMatrix);
-                        Console.WriteLine($"{FirstMatrix}");
-                        break;
-                    case "8":
-                        exit = true;
-                        break;
-                    default:
-                        Console.WriteLine("Некорректный выбор. Попробуйте снова.\n");
-                        break;
-                }
-            }
-
-            void CalculationsMenu(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix)
-            {
-                Console.WriteLine("Выберите действие\n1. Сложение\n2. Вычитание\n3. Умножение\n4. Проверить на равность\n" +
-                                  "5. Больше\n6. Меньше\n7. Больше или равно\n8. Меньше или равно");
-                string Choice = Console.ReadLine();
-                switch (Choice)
-                {
-                    case "1":
-                        Console.WriteLine($"A + B \n{FirstMatrix + SecondMatrix}");
-                        break;
-                    case "2":
-                        Console.WriteLine($"A - B \n{FirstMatrix - SecondMatrix}");
-                        break;
-                    case "3":
-                        Console.WriteLine($"A * B \n{FirstMatrix * SecondMatrix}");
-                        break;
-                    case "4":
-                        Console.WriteLine($"A == B: {FirstMatrix == SecondMatrix}");
-                        break;
-                    case "5":
-                        Console.WriteLine($"A > B: {FirstMatrix > SecondMatrix}");
-                        break;
-                    case "6":
-                        Console.WriteLine($"A < B: {FirstMatrix < SecondMatrix}");
-                        break;
-                    case "7":
-                        Console.WriteLine($"A >= B: {FirstMatrix >= SecondMatrix}");
-                        break;
-                    case "8":
-                        Console.WriteLine($"A <= B: {FirstMatrix <= SecondMatrix}");
-                        break;
-                    default:
-                        Console.WriteLine("Некорректный запрос.");
-                        break;
-                }
-            }
-            void FillMatrix(CreationOfMatrix FirstMatrix, CreationOfMatrix Secondmatrix)
+                      
+            void FillMatrix(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix)
             {
                 Console.WriteLine("Матрицы:");
                 Console.WriteLine(FirstMatrix.ToString());
                 Console.WriteLine(SecondMatrix.ToString());
             }
+            
+        }
+        
+        public static void ConvertToDiagonal(CreationOfMatrix FirstMatrix)
+        {
+            Action<CreationOfMatrix> convertDelegate = delegate (CreationOfMatrix matrix) {
+                for (int Column = 0; Column < matrix.Dimension; Column++)
+                {
+                    for (int Row = 0; Row < matrix.Dimension; Row++)
+                    {
+                        if (Column != Row)
+                            matrix.Matrix[Column, Row] = 0;
+                    }
+                }
+            };
+
+            FirstMatrix.ConvertToDiagonal(convertDelegate);
+            Console.WriteLine($"Матрица приведена к диагональному виду.\n {FirstMatrix}");
+        }        
+    }
+    
+    public delegate void HandleDelegate(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice);
+    public abstract class Handler
+    {
+        public HandleDelegate HandleRequest;
+        public Handler Successor { get; set; }
+        public abstract void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice);
+    }
+
+    public class Start : Handler
+    {
+        public Start()
+        {
+            Successor = new Summ();
+            HandleRequest = HandlerRequest;
+        }
+
+        public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice)
+        {
+            Successor.HandleRequest(FirstMatrix, SecondMatrix, Choice);
+        }
+    }
+
+    public class Plus : Handler
+    {
+        public Plus()
+        {
+            Successor = new Sub();
+            HandleRequest = HandlerRequest;
+        }
+
+        public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice)
+        {
+            if (Choice == 1)
+            {
+                Console.WriteLine($"Сумма:\n{FirstMatrix + SecondMatrix}");
+            }
+            else
+            {
+                Successor.HandleRequest(FirstMatrix, SecondMatrix, Choice);
+            }
+        }
+    }
+
+    public class Minus : Handler
+    {
+
+        public Minus()
+        {
+            Successor = new Minus();
+            HandleRequest = HandlerRequest;
+        }
+
+        public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice)
+        {
+            if (Choice == 2)
+            {
+                Console.WriteLine($"Разность:\n{FirstMatrix - SecondMatrix}");
+            }
+            else
+            {
+                Successor.HandleRequest(FirstMatrix, SecondMatrix, Choice);
+            }
+        }
+    }
+
+    public class Mult : Handler
+    {
+        public Mult()
+        {
+            Successor = new Det();
+            HandleRequest = HandlerRequest;
+        }
+
+        public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice)
+        {   
+            if (Choice == 4)
+            {
+                Console.WriteLine($"Произведение:\n{FirstMatrix * SecondMatrix}");
+            }
+            else
+            {
+                Successor.HandleRequest(FirstMatrix, SecondMatrix, Choice);
+            }
+        }
+    }
+
+    public class Det : Handler
+    {
+        public Det()
+        {
+            Successor = new Inverse();
+            HandleRequest = HandlerRequest;
+        }
+
+        public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice)
+        {
+            if (Choice == 5)
+            {
+                Console.WriteLine($"Детерминант матрицы равен: {FirstMatrix.Determinant()}");
+            }
+            else
+            {
+                Successor.HandleRequest(FirstMatrix, SecondMatrix, Choice);
+            }
+        }
+    }
+
+    public class Inverse : Handler
+    {
+        public Inverse()
+        {
+            Successor = new Diagonal();
+            HandleRequest = HandlerRequest;
+        }
+
+        public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice)
+        {
+            if (Choice == 6)
+            {
+                try
+                {
+                    var InverseOfMatrix = FirstMatrix.Inversion();
+                    Console.WriteLine($"Обратная матрица А:\n{InverseOfMatrix}");
+                }
+                catch (NotInvertible ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
+            }
+            else
+            {
+                Successor.HandleRequest(FirstMatrix, SecondMatrix, Choice);
+            }
+        }
+    }
+
+
+    public class Diagonal : Handler
+    {
+        public Diagonal()
+        {
+            Successor = new Back();
+            HandleRequest = HandlerRequest;
+        }
+
+        public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix Matrix2, int UserChoice)
+        {
+            if (UserChoice == 7)
+            {
+                Operations.ConvertToDiagonal(FirstMatrix);               
+                Console.WriteLine($"Матрица диагонального вида:{FirstMatrix}\n");
+            }
+            else
+            {
+                Successor.HandleRequest(FirstMatrix, Matrix2, UserChoice);
+            }
+        }
+    }
+
+    public class Back : Handler
+    {
+        public Back()
+        {
+            HandleRequest = HandlerRequest;
+        }
+        public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice)
+        {
+            Console.WriteLine("Такого нет");
+            Successor = new Plus();
+
+            Console.Write("Введите номер пункта из списка: ");
+            Choice = int.Parse(Console.ReadLine());
+            Successor.HandleRequest(FirstMatrix, SecondMatrix, Choice);
         }
     }
 }
