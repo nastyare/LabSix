@@ -509,7 +509,7 @@ namespace LabSix
     {
         public Mult()
         {
-            Successor = new Det();
+            Successor = new Determinant();
             HandleRequest = HandlerRequest;
         }
 
@@ -526,9 +526,9 @@ namespace LabSix
         }
     }
 
-    public class Det : Handler
+    public class Determinant : Handler
     {
-        public Det()
+        public Determinant()
         {
             Successor = new Inverse();
             HandleRequest = HandlerRequest;
