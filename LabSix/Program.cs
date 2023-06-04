@@ -272,9 +272,9 @@ namespace LabSix
             return SubMatrix;
         }
 
-        public void ConvertToDiagonal(Action<CreationOfMatrix> convertDelegate)
+        public void ConvertToDiagonal(Action<CreationOfMatrix> ConvertDelegate)
         {
-            convertDelegate(this);
+            ConvertDelegate(this);
         }
 
         public override string ToString()
@@ -425,18 +425,18 @@ namespace LabSix
 
         public static void ConvertToDiagonal(CreationOfMatrix FirstMatrix)
         {
-            Action<CreationOfMatrix> convertDelegate = delegate (CreationOfMatrix matrix) {
-                for (int Column = 0; Column < matrix.Dimension; Column++)
+            Action<CreationOfMatrix> ConvertDelegate = delegate (CreationOfMatrix Matrix) {
+                for (int Column = 0; Column < Matrix.Dimension; ++Column)
                 {
-                    for (int Row = 0; Row < matrix.Dimension; Row++)
+                    for (int Row = 0; Row < Matrix.Dimension; ++Row)
                     {
                         if (Column != Row)
-                            matrix.Matrix[Column, Row] = 0;
+                            Matrix.Matrix[Column, Row] = 0;
                     }
                 }
             };
 
-            FirstMatrix.ConvertToDiagonal(convertDelegate);
+            FirstMatrix.ConvertToDiagonal(ConvertDelegate);
             Console.WriteLine($"Матрица приведена к диагональному виду.\n {FirstMatrix}");
         }
     }
