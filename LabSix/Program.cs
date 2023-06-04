@@ -409,14 +409,15 @@ namespace LabSix
             Console.WriteLine($"Ваши матрицы:\n{FirstMatrix}\n{SecondMatrix}\n");
 
             Console.WriteLine("Меню:");
-            Console.WriteLine("\n1.Сумма\n2. Разность \n3. Произведение\n" +
-                              "4. Детерминант\n5. Обратная матрица А\n6.Диагональный вид матрицы А");
+            Console.WriteLine("\n1. Сумма\n2. Разность \n3. Произведение\n" +
+                              "4. Детерминант\n5. Обратная матрица А\n6. Диагональный вид матрицы А\n" +
+                              "7. Транспонирование\n8. След матрицы");
             Console.WriteLine("\nВыберите действие:");
             int Choice = int.Parse(Console.ReadLine());
 
-            Start Hand = new Start();
+            Start Menu = new Start();
 
-            Hand.HandleRequest(FirstMatrix, SecondMatrix, Choice); // запуск цепочки обязанностей
+            Menu.HandleRequest(FirstMatrix, SecondMatrix, Choice); // запуск цепочки обязанностей
 
             Console.ReadKey();
 
@@ -440,10 +441,10 @@ namespace LabSix
         }
     }
 
-    public delegate void HandleDelegate(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice);
+    public delegate void DelegateForHandle(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice);
     public abstract class Handler
     {
-        public HandleDelegate HandleRequest;
+        public DelegateForHandle HandleRequest;
         public Handler Successor { get; set; }
         public abstract void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice);
     }
@@ -581,6 +582,7 @@ namespace LabSix
     {
         public Diagonal()
         {
+            Successor = new Transposition();
             HandleRequest = HandlerRequest;
         }
 
@@ -589,6 +591,50 @@ namespace LabSix
             if (UserChoice == 6)
             {
                 Operations.ConvertToDiagonal(FirstMatrix);
+            }
+            else
+            {
+                Successor.HandleRequest(FirstMatrix, Matrix2, UserChoice);
+            }
+        }
+    }
+
+    public class Transposition : Handler
+    {
+        public Transposition()
+        {
+            Successor = new Trace();
+            HandleRequest = HandlerRequest;
+        }
+
+        public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix Matrix2, int UserChoice)
+        {
+            if (UserChoice == 7)
+            {
+                var TransposedMatrix = FirstMatrix.MatrixTransposition();
+                Console.WriteLine("Транспонированная матрица:");
+                Console.WriteLine(TransposedMatrix);
+            }
+            else
+            {
+                Successor.HandleRequest(FirstMatrix, Matrix2, UserChoice);
+            }
+        }
+    }
+
+    public class Trace : Handler
+    {
+        public Trace()
+        {
+            HandleRequest = HandlerRequest;
+        }
+
+        public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix Matrix2, int UserChoice)
+        {
+            if (UserChoice == 8)
+            {
+                double Trace = FirstMatrix.MatrixTrace();
+                Console.WriteLine($"След матрицы: {Trace}\n");
             }
             else
             {
