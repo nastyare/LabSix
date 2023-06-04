@@ -2,35 +2,6 @@ using System;
 
 namespace LabSix
 {
-    public static class MatrixExtensions
-    { 
-        public static CreationOfMatrix MatrixTransposition(this CreationOfMatrix FirstMatrix)
-        {
-            for (int IndexColumn = 0; IndexColumn < FirstMatrix.Dimension; ++IndexColumn)
-            {
-                for (int IndexRow = 0; IndexRow < FirstMatrix.Dimension; ++IndexRow)
-                {
-                    FirstMatrix.Matrix[IndexColumn, IndexRow] = FirstMatrix.Matrix[IndexRow, IndexColumn];
-                }
-            }
-            return FirstMatrix;
-        }
-        public static double MatrixTrace(this CreationOfMatrix Matrix)
-        {
-            double Result = 0;
-            for (int IndexColumn = 0; IndexColumn < Matrix.Dimension; ++IndexColumn)
-            {
-                for (int IndexRow = 0; IndexRow < Matrix.Dimension; ++IndexRow)
-                {
-                    if (IndexColumn == IndexRow)
-                    {
-                        Result += Matrix.Matrix[IndexColumn, IndexRow];
-                    }
-                }
-            }
-            return Result;
-        }
-    }
     public class CreationOfMatrix
     {
         public double[,] Matrix;
@@ -380,6 +351,37 @@ namespace LabSix
         }
     }
 
+
+    public static class MatrixExtensions //расширяющие методы
+    { 
+        public static CreationOfMatrix MatrixTransposition(this CreationOfMatrix FirstMatrix)
+        {
+            for (int IndexColumn = 0; IndexColumn < FirstMatrix.Dimension; ++IndexColumn)
+            {
+                for (int IndexRow = 0; IndexRow < FirstMatrix.Dimension; ++IndexRow)
+                {
+                    FirstMatrix.Matrix[IndexColumn, IndexRow] = FirstMatrix.Matrix[IndexRow, IndexColumn];
+                }
+            }
+            return FirstMatrix;
+        }
+        public static double MatrixTrace(this CreationOfMatrix Matrix) //след матрицы
+        {
+            double Result = 0;
+            for (int IndexColumn = 0; IndexColumn < Matrix.Dimension; ++IndexColumn)
+            {
+                for (int IndexRow = 0; IndexRow < Matrix.Dimension; ++IndexRow)
+                {
+                    if (IndexColumn == IndexRow)
+                    {
+                        Result += Matrix.Matrix[IndexColumn, IndexRow];
+                    }
+                }
+            }
+            return Result;
+        }
+    }
+    
     class Operations
     {
         static void Main(string[] args)
@@ -405,9 +407,9 @@ namespace LabSix
             }
             
             Console.WriteLine("Меню:");
-            Console.WriteLine("\n1. Генерация Матриц\n2. Вычисление 2х матриц\n3. Найти Определитель матрицы А\n4. Обратная матрица А\n" +
-                              "5. Транспортирование матрицы А\n6. Сумма элементов диагонали Матрицы А\n7.Диагональный вид матрицы А\n" +
-                              "8. Вывести матрицу\n9.Выход");
+            Console.WriteLine("\n1. Генерация Матриц\n2. Сумма\n3. Разность \n4. Произведение\n" +
+                              "5. Детерминант\n6. Обратная матрица А\n7.Диагональный вид матрицы А\n" +
+                              "8.Выход");
             Console.WriteLine("\nВыберите действие:");
             int Choice = int.Parse(Console.ReadLine());
 
@@ -457,7 +459,7 @@ namespace LabSix
     {
         public Start()
         {
-            Successor = new Summ();
+            Successor = new Fill();
             HandleRequest = HandlerRequest;
         }
 
@@ -467,17 +469,38 @@ namespace LabSix
         }
     }
 
-    public class Plus : Handler
+    public class Fill : Handler
     {
-        public Plus()
+        public Fill()
         {
-            Successor = new Sub();
+            Successor = new Plus();
             HandleRequest = HandlerRequest;
         }
 
         public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice)
         {
             if (Choice == 1)
+            {
+                FillMatrix(FirstMatrix, SecondMatrix);
+            }
+            else
+            {
+                Successor.HandleRequest(FirstMatrix, SecondMatrix, Choice);
+            }
+        }
+    }
+    
+    public class Plus : Handler
+    {
+        public Plus()
+        {
+            Successor = new Minus();
+            HandleRequest = HandlerRequest;
+        }
+
+        public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice)
+        {
+            if (Choice == 2)
             {
                 Console.WriteLine($"Сумма:\n{FirstMatrix + SecondMatrix}");
             }
@@ -499,7 +522,7 @@ namespace LabSix
 
         public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice)
         {
-            if (Choice == 2)
+            if (Choice == 3)
             {
                 Console.WriteLine($"Разность:\n{FirstMatrix - SecondMatrix}");
             }
