@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 
 namespace LabSix
 {
@@ -353,7 +354,7 @@ namespace LabSix
 
 
     public static class MatrixExtensions //расширяющие методы
-    { 
+    {
         public static CreationOfMatrix MatrixTransposition(this CreationOfMatrix FirstMatrix)
         {
             for (int IndexColumn = 0; IndexColumn < FirstMatrix.Dimension; ++IndexColumn)
@@ -381,7 +382,7 @@ namespace LabSix
             return Result;
         }
     }
-    
+
     class Operations
     {
         static void Main(string[] args)
@@ -405,11 +406,11 @@ namespace LabSix
                     SecondMatrix[RowIndex, ColumnIndex] = Random.Next(100);
                 }
             }
-            
+            Console.WriteLine($"Ваши матрицы:\n{FirstMatrix}\n{SecondMatrix}\n");
+
             Console.WriteLine("Меню:");
-            Console.WriteLine("\n1. Генерация Матриц\n2. Сумма\n3. Разность \n4. Произведение\n" +
-                              "5. Детерминант\n6. Обратная матрица А\n7.Диагональный вид матрицы А\n" +
-                              "8.Выход");
+            Console.WriteLine("\n1.Сумма\n2. Разность \n3. Произведение\n" +
+                              "4. Детерминант\n5. Обратная матрица А\n6.Диагональный вид матрицы А");
             Console.WriteLine("\nВыберите действие:");
             int Choice = int.Parse(Console.ReadLine());
 
@@ -419,16 +420,8 @@ namespace LabSix
 
             Console.ReadKey();
 
-                      
-            void FillMatrix(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix)
-            {
-                Console.WriteLine("Матрицы:");
-                Console.WriteLine(FirstMatrix.ToString());
-                Console.WriteLine(SecondMatrix.ToString());
-            }
-            
         }
-        
+
         public static void ConvertToDiagonal(CreationOfMatrix FirstMatrix)
         {
             Action<CreationOfMatrix> convertDelegate = delegate (CreationOfMatrix matrix) {
@@ -444,9 +437,9 @@ namespace LabSix
 
             FirstMatrix.ConvertToDiagonal(convertDelegate);
             Console.WriteLine($"Матрица приведена к диагональному виду.\n {FirstMatrix}");
-        }        
+        }
     }
-    
+
     public delegate void HandleDelegate(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice);
     public abstract class Handler
     {
@@ -459,7 +452,7 @@ namespace LabSix
     {
         public Start()
         {
-            Successor = new Fill();
+            Successor = new Plus();
             HandleRequest = HandlerRequest;
         }
 
@@ -468,28 +461,6 @@ namespace LabSix
             Successor.HandleRequest(FirstMatrix, SecondMatrix, Choice);
         }
     }
-
-    public class Fill : Handler
-    {
-        public Fill()
-        {
-            Successor = new Plus();
-            HandleRequest = HandlerRequest;
-        }
-
-        public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice)
-        {
-            if (Choice == 1)
-            {
-                FillMatrix(FirstMatrix, SecondMatrix);
-            }
-            else
-            {
-                Successor.HandleRequest(FirstMatrix, SecondMatrix, Choice);
-            }
-        }
-    }
-    
     public class Plus : Handler
     {
         public Plus()
@@ -500,7 +471,7 @@ namespace LabSix
 
         public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice)
         {
-            if (Choice == 2)
+            if (Choice == 1)
             {
                 Console.WriteLine($"Сумма:\n{FirstMatrix + SecondMatrix}");
             }
@@ -516,13 +487,13 @@ namespace LabSix
 
         public Minus()
         {
-            Successor = new Minus();
+            Successor = new Mult();
             HandleRequest = HandlerRequest;
         }
 
         public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice)
         {
-            if (Choice == 3)
+            if (Choice == 2)
             {
                 Console.WriteLine($"Разность:\n{FirstMatrix - SecondMatrix}");
             }
@@ -542,8 +513,8 @@ namespace LabSix
         }
 
         public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice)
-        {   
-            if (Choice == 4)
+        {
+            if (Choice == 3)
             {
                 Console.WriteLine($"Произведение:\n{FirstMatrix * SecondMatrix}");
             }
@@ -564,7 +535,7 @@ namespace LabSix
 
         public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice)
         {
-            if (Choice == 5)
+            if (Choice == 4)
             {
                 Console.WriteLine($"Детерминант матрицы равен: {FirstMatrix.Determinant()}");
             }
@@ -585,7 +556,7 @@ namespace LabSix
 
         public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice)
         {
-            if (Choice == 6)
+            if (Choice == 5)
             {
                 try
                 {
@@ -610,38 +581,19 @@ namespace LabSix
     {
         public Diagonal()
         {
-            Successor = new Back();
             HandleRequest = HandlerRequest;
         }
 
         public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix Matrix2, int UserChoice)
         {
-            if (UserChoice == 7)
+            if (UserChoice == 6)
             {
-                Operations.ConvertToDiagonal(FirstMatrix);               
-                Console.WriteLine($"Матрица диагонального вида:{FirstMatrix}\n");
+                Operations.ConvertToDiagonal(FirstMatrix);
             }
             else
             {
                 Successor.HandleRequest(FirstMatrix, Matrix2, UserChoice);
             }
-        }
-    }
-
-    public class Back : Handler
-    {
-        public Back()
-        {
-            HandleRequest = HandlerRequest;
-        }
-        public override void HandlerRequest(CreationOfMatrix FirstMatrix, CreationOfMatrix SecondMatrix, int Choice)
-        {
-            Console.WriteLine("Такого нет");
-            Successor = new Plus();
-
-            Console.Write("Введите номер пункта из списка: ");
-            Choice = int.Parse(Console.ReadLine());
-            Successor.HandleRequest(FirstMatrix, SecondMatrix, Choice);
         }
     }
 }
